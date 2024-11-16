@@ -17,9 +17,9 @@ dotenv.config(); // parsing .env file variables
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://contactease.netlify.app/"],
+    origin: '*',  // This will allow requests from all origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
+    credentials: true,  // This will allow cookies and credentials to be sent along with requests
 }));
 
 const port = process.env.PORT || 4000;
