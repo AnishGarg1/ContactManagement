@@ -5,9 +5,9 @@ const Home = () => {
     <div className='w-full h-full flex justify-center items-center'>
         <main className='max-w-7xl mx-auto p-6 text-center'>
           <section className='my-16'>
-            <h2 className='text-4xl font-bold mb-4'>Welcome to Rehaabit</h2>
+            <h2 className='text-4xl font-bold mb-4'>Welcome to ContactEase</h2>
             <p className='text-white text-opacity-80 mb-6'>
-              Your journey to better habits starts here. Track your progress and achieve your goals with Rehaabit.
+              Your journey to better habits starts here. Track your progress and achieve your goals with ContactEase.
             </p>
             <div className='flex justify-center flex-wrap'>
               <button className='bg-purple-600 text-white py-3 px-6 rounded mr-4 mb-2 hover:bg-purple-700'>

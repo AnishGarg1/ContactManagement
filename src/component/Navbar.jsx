@@ -26,7 +26,7 @@ const Navbar = () => {
                 <div className='flex justify-center items-center gap-1 hover:text-white hover:scale-110 transition-all duration-200'>
                     {/* <BiContact/> Contact Icon */}
                     <p>
-                        Rehaabit Task App
+                        ContactEase
                     </p>
                 </div>
             </Link>

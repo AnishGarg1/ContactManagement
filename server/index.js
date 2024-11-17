@@ -29,7 +29,7 @@ app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/contact", contactRoutes);
 
 app.get("/", (req, res) => {
-    res.send("Rehaabit Contact App");
+    res.send("Contact Management App");
 })
 
 app.listen(port, () => {
