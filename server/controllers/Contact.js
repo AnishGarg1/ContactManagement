@@ -52,6 +52,7 @@ exports.createContact = async (req, res) => {
     console.log("Error:", error);
     return res.status(500).json({
       success: false,
+      error,
       message: "Internal server error, try again",
     });
   }
