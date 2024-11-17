@@ -7,7 +7,7 @@ import Login from './component/Auth/Login';
 import Signup from './component/Auth/Signup';
 import Dashboard from './component/Dashboard';
 import OpenRoute from './component/Auth/OpenRoute';
-import Task from './component/Task';
+import Contact from './component/Contact';
 import PrivateRoute from './component/Auth/PrivateRoute';
 
 function App() {
@@ -48,10 +48,10 @@ function App() {
         />
         
         <Route 
-          path='/task/:taskId' 
+          path='/contact/:contactId' 
           element={
             <PrivateRoute>
-              <Task/>
+              <Contact/>
             </PrivateRoute>
           }
         />

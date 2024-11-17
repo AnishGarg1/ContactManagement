@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors")
 
 const userRoutes = require("./routes/User");
-const taskRoutes = require("./routes/Task");
+const contactRoutes = require("./routes/Contact");
 
 // Connecting to database
 database.dbConnect();
@@ -26,10 +26,10 @@ const port = process.env.PORT || 4000;
 
 // routes
 app.use("/api/v1/auth", userRoutes);
-app.use("/api/v1/task", taskRoutes);
+app.use("/api/v1/contact", contactRoutes);
 
 app.get("/", (req, res) => {
-    res.send("Rehaabit Task App");
+    res.send("Rehaabit Contact App");
 })
 
 app.listen(port, () => {

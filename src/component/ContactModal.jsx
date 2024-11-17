@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useSelector } from 'react-redux';
-import { createTask } from '../service/apiUtils/taskAPIs';
+import { createContact } from '../service/apiUtils/contactAPIs';
 import { useNavigate } from 'react-router-dom';
 
-const TaskModal = ({ setIsModalOpen }) => {
+const ContactModal = ({ setIsModalOpen }) => {
     const { token } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
@@ -21,8 +21,8 @@ const TaskModal = ({ setIsModalOpen }) => {
     }
 
     const handleClickSave = async () => {
-        const result = await createTask({ title }, token);
-        navigate(`/task/${result._id}`)
+        const result = await createContact({ title }, token);
+        navigate(`/contact/${result._id}`)
         setCurrTitle("");
         setIsModalOpen(false);
     }
@@ -40,7 +40,7 @@ const TaskModal = ({ setIsModalOpen }) => {
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50'>
         <div className='bg-white rounded-lg shadow-lg p-6 w-[350px] max-w-md animate-fadeIn'>
             <div className='flex justify-between items-center mb-4'>
-                <h2 className='text-xl font-semibold'>Create Task</h2>
+                <h2 className='text-xl font-semibold'>Create Contact</h2>
                 <IoIosCloseCircleOutline
                     className='cursor-pointer text-2xl text-gray-500 hover:text-red-600 transition-colors' 
                     onClick={() => {
@@ -61,7 +61,7 @@ const TaskModal = ({ setIsModalOpen }) => {
                     type='text'
                     value={title}
                     className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                    placeholder='Type the task name...'
+                    placeholder='Type the contact name...'
                     onChange={handleChangeTitle}
                     autoFocus
                 />
@@ -92,4 +92,4 @@ const TaskModal = ({ setIsModalOpen }) => {
   )
 }
 
-export default TaskModal
+export default ContactModal

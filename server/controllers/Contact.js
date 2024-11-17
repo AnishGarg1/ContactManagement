@@ -1,7 +1,7 @@
-const Task = require("../models/Task");
+const Contact = require("../models/Contact");
 const User = require("../models/User");
 
-exports.createTask = async (req, res) => {
+exports.createContact = async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -23,27 +23,27 @@ exports.createTask = async (req, res) => {
       });
     }
 
-    const task = new Task({
+    const contact = new Contact({
       user: user._id,
       title,
       description,
       status: "In Progress",
     });
 
-    const createdTask = await task.save();
+    const createdContact = await contact.save();
 
     await User.findByIdAndUpdate(
       userId,
       {
-        $push: { tasks: createdTask._id },
+        $push: { contacts: createdContact._id },
       },
       { new: true }
     );
 
     return res.status(200).json({
       success: true,
-      task,
-      message: "Task created successfully",
+      contact,
+      message: "Contact created successfully",
     });
   } catch (error) {
     console.log("Error:", error);
@@ -54,42 +54,42 @@ exports.createTask = async (req, res) => {
   }
 };
 
-// update task
-exports.updateTask = async (req, res) => {
+// update contact
+exports.updateContact = async (req, res) => {
     try {
-        const { taskId, title, description, status } = req.body;
+        const { contactId, title, description, status } = req.body;
         
-        if(!taskId){
+        if(!contactId){
             return res.status(400).json({
                 success: false,
                 message: "Please fill all details",
             });
         }
 
-        const task = await Task.findById(taskId);
-        if(!task){
+        const contact = await Contact.findById(contactId);
+        if(!contact){
             return res.statusa(404).json({
                 success: false,
-                message: "Task not found",
+                message: "Contact not found",
             });
         }
 
         if(title){
-            task.title = title;
+            contact.title = title;
         }
         if(description){
-            task.description = description;
+            contact.description = description;
         }
         if(status){
-            task.status = status;
+            contact.status = status;
         }
 
-        await task.save();
+        await contact.save();
 
         return res.status(200).json({
             success: true,
-            task,
-            message: "Task updated successfully",
+            contact,
+            message: "Contact updated successfully",
         });
     } catch (error) {
         console.log("Error:", error);
@@ -100,33 +100,33 @@ exports.updateTask = async (req, res) => {
     }
 }
 
-// get task details
-exports.getTaskDetails = async (req, res) => {
+// get contact details
+exports.getContactDetails = async (req, res) => {
     try {
-        const { taskId } = req.body;
+        const { contactId } = req.body;
 
-        if(!taskId){
+        if(!contactId){
             return res.status(400).json({
                 success: false,
                 message: "Please fill details",
             });
         }
 
-        const task = await Task.findById(taskId).populate({path: "user"});
+        const contact = await Contact.findById(contactId).populate({path: "user"});
 
-        task.user.password = undefined;
+        contact.user.password = undefined;
 
-        if(!task){
+        if(!contact){
             return res.status(404).json({
                 success: false,
-                message: "Task not found",
+                message: "Contact not found",
             });
         }
 
         return res.status(200).json({
             success: true,
-            task,
-            message: "Task fetched successfully",
+            contact,
+            message: "Contact fetched successfully",
         });
     } catch (error) {
         console.log("Error:", error);
@@ -137,17 +137,17 @@ exports.getTaskDetails = async (req, res) => {
     }
 }
 
-// get user's all task
-exports.getAllTaskDetails = async (req, res) => {
+// get user's all contact
+exports.getAllContactDetails = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const allTasks = await Task.find({ user: userId }).sort({ createdAt: -1 });
+    const allContacts = await Contact.find({ user: userId }).sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
-      allTasks,
-      message: "All tasks fetched successfully",
+      allContacts,
+      message: "All contacts fetched successfully",
     });
   } catch (error) {
     return res.status(500).json({
@@ -157,13 +157,13 @@ exports.getAllTaskDetails = async (req, res) => {
   }
 };
 
-// delete task
-exports.deleteTask = async (req, res) => {
+// delete contact
+exports.deleteContact = async (req, res) => {
   try {
-    const { taskId } = req.body;
+    const { contactId } = req.body;
     const userId = req.user.id;
 
-    if (!taskId) {
+    if (!contactId) {
       return res.status(400).json({
         success: false,
         message: "Please fill all details",
@@ -173,16 +173,16 @@ exports.deleteTask = async (req, res) => {
     await User.findByIdAndUpdate(
       userId,
       {
-        $pull: { tasks: taskId },
+        $pull: { contacts: contactId },
       },
       { new: true }
     );
 
-    await Task.findByIdAndDelete(taskId);
+    await Contact.findByIdAndDelete(contactId);
 
     return res.status(200).json({
       success: true,
-      message: "Task deleted successfully",
+      message: "Contact deleted successfully",
     });
   } catch (error) {
     console.log("Error:", error);

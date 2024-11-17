@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import Tasks from './Tasks';
+import Contacts from './Contacts';
 import { IoMdAddCircleOutline } from "react-icons/io"
-import TaskModal from './TaskModal';
+import ContactModal from './ContactModal';
 import { useSelector } from 'react-redux';
 
 const Dashboard = () => {
-    // const [taskList, setTaskList] = useState([]);
+    // const [contactList, setContactList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { user } = useSelector((state) => state.auth);
 
@@ -19,7 +19,7 @@ const Dashboard = () => {
                     onClick={() => setIsModalOpen(true)}
                 >
                     <p className='relative z-10'>
-                        Create Task
+                        Create Contact
                     </p>
                     <IoMdAddCircleOutline
                         className='text-xl'
@@ -28,12 +28,12 @@ const Dashboard = () => {
                 </div>
             </div>
             
-            <Tasks/>
+            <Contacts/>
         </div>
 
         {isModalOpen
         ? (
-            <TaskModal setIsModalOpen={setIsModalOpen}/>
+            <ContactModal setIsModalOpen={setIsModalOpen}/>
         ): (
             <></>
         )}

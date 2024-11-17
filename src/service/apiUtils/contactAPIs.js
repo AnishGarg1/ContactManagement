@@ -1,152 +1,152 @@
 import toast from "react-hot-toast";
 import { apiConnect } from "../apiConnect";
-import { taskEndpoints } from "../apis";
-import { setTasksList } from "../../redux/slices/taskSlice";
+import { contactEndpoints } from "../apis";
+import { setContactsList } from "../../redux/slices/contactSlice";
 
 const {
-    CREATE_TASK_API,
-    GET_TASK_API,
-    GET_ALL_TASKS_API,
-    UPDATE_TASK_API,
-    DELETE_TASK_API,
-} = taskEndpoints;
+    CREATE_CONTACT_API,
+    GET_CONTACT_API,
+    GET_ALL_CONTACTS_API,
+    UPDATE_CONTACT_API,
+    DELETE_CONTACT_API,
+} = contactEndpoints;
 
-export const createTask = async (data, token) => {
+export const createContact = async (data, token) => {
     let result = null;
     const toastId = toast.loading("Loading...");
     try {
         const response = await apiConnect(
             "POST",
-            CREATE_TASK_API,
+            CREATE_CONTACT_API,
             data,
             {
                 Authorization: `Bearer ${token}`
             }
         )
-        console.log("CREATE TASK API RESPONSE.....", response);
+        console.log("CREATE CONTACT API RESPONSE.....", response);
 
         if(!response?.data?.success){
             toast.error(response?.data?.message);
             throw new Error("Error");
         }
-        result = response.data.task;
-        toast.success("Task Created Successfully")
+        result = response.data.contact;
+        toast.success("Contact Created Successfully")
     } catch (error) {
-        console.log("CREATE TASK API ERROR:", error);
+        console.log("CREATE CONTACT API ERROR:", error);
         toast.error("Something went wrong");
     }
     toast.dismiss(toastId);
     return result;
 }
 
-export const getTask = async (taskId, token) => {
+export const getContact = async (contactId, token) => {
     let result = null;
     const toastId = toast.loading("Loading...");
     try {
         const response = await apiConnect(
             "POST",
-            GET_TASK_API,
+            GET_CONTACT_API,
             {
-                taskId,
+                contactId,
             },
             {
                 Authorization: `Bearer ${token}`
             }
         )
-        console.log("GET TASK API RESPONSE.....", response);
+        console.log("GET CONTACT API RESPONSE.....", response);
 
         if(!response?.data?.success){
             toast.error(response.data.message);
             throw new Error("Error");
         }
-        result = response.data.task;
+        result = response.data.contact;
     } catch (error) {
-        console.log("GET TASK API ERROR:", error);
+        console.log("GET CONTACT API ERROR:", error);
         toast.error("Something went wrong");
     }
     toast.dismiss(toastId);
     return result;
 }
 
-export const getAllTasks = async (token, dispatch) => {
+export const getAllContacts = async (token, dispatch) => {
     let result = [];
     const toastId = toast.loading("Loading...");
     try {
         const response = await apiConnect(
             "GET",
-            GET_ALL_TASKS_API, 
+            GET_ALL_CONTACTS_API, 
             null,
             {
                 Authorization: `Bearer ${token}`
             }
         );
-        console.log("GET ALL TASKS API RESPONSE.....", response);
+        console.log("GET ALL CONTACTS API RESPONSE.....", response);
 
         if(!response?.data?.success){
             toast.error(response?.data?.message);
             throw new Error("Error");
         }
-        result = response.data.allTasks;
-        dispatch(setTasksList(result));
+        result = response.data.allContacts;
+        dispatch(setContactsList(result));
     } catch (error) {
-        console.log("GET ALL TASKS API Error:", error);
+        console.log("GET ALL CONTACTS API Error:", error);
         toast.error("Something went wrong")
     }
     toast.dismiss(toastId);
     return result;
 }
 
-export const updateTask = async (data, token, dispatch) => {
+export const updateContact = async (data, token, dispatch) => {
     let result = null;
     const toastId = toast.loading("Loading...");
     try {
         const response = await apiConnect(
             "PUT",
-            UPDATE_TASK_API,
+            UPDATE_CONTACT_API,
             data,
             {
                 Authorization: `Bearer ${token}`
             }
         )
-        console.log("UPDATE TASK API RESPONSE.....", response);
+        console.log("UPDATE CONTACT API RESPONSE.....", response);
 
         if(!response.data.success){
             toast.error(response?.data?.message);
             throw new Error("Error");
         }
 
-        result = response.data.task;
-        // dispatch(setTasksList(result?.data?.tasksList));
-        toast.success("Task Updated");
+        result = response.data.contact;
+        // dispatch(setContactsList(result?.data?.contactsList));
+        toast.success("Contact Updated");
     } catch (error) {
-        console.log("EDIT TASK API ERROR:", error);
+        console.log("EDIT CONTACT API ERROR:", error);
         toast.error("Something went wrong");
     }
     toast.dismiss(toastId);
     return result;
 }
 
-export const deleteTask = async (taskId, token) => {
+export const deleteContact = async (contactId, token) => {
     const toastId = toast.loading("Loading...");
     try {
         const response = await apiConnect(
             "DELETE",
-            DELETE_TASK_API,
-            {taskId},
+            DELETE_CONTACT_API,
+            {contactId},
             {
                 Authorization: `Bearer ${token}`
             }
         )
-        console.log("DELETE TASK API RESPONSE.....", response);
+        console.log("DELETE CONTACT API RESPONSE.....", response);
 
         if(!response?.data?.success){
             toast.error(response?.data?.message);
             throw new Error("Error");
         }
 
-        toast.success("Task deleted");
+        toast.success("Contact deleted");
     } catch (error) {
-        console.log("DELETE TASK API ERROR:", error);
+        console.log("DELETE CONTACT API ERROR:", error);
         toast.error("Something went wrong");
     }
     toast.dismiss(toastId);

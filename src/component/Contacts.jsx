@@ -2,23 +2,23 @@ import React, { useEffect, useState } from 'react'
 import { RiDeleteBin6Line } from "react-icons/ri"
 import { FiEdit2 } from "react-icons/fi";
 import { Link, useNavigate } from 'react-router-dom';
-import { getAllTasks } from '../service/apiUtils/taskAPIs';
+import { getAllContacts } from '../service/apiUtils/contactAPIs';
 import { useDispatch, useSelector } from 'react-redux';
-import TaskModalEdit from './TaskModalEdit';
+import ContactModalEdit from './ContactModalEdit';
 
-const Tasks = () => {
+const Contacts = () => {
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { tasksList } = useSelector((state) => state.task);
+  const { contactsList } = useSelector((state) => state.contact);
   
-  const [currTaskList, setCurrTaskList] = useState([]);
+  const [currContactList, setCurrContactList] = useState([]);
   const [filter, setFilter] = useState("All");
   const [showMoreList, setShowMoreList] = useState([]);
 
-  const [taskModalEdit, setTaskModalEdit] = useState(false);
-  const [taskModalEditId, setTaskModalEditId] = useState("");
+  const [contactModalEdit, setContactModalEdit] = useState(false);
+  const [contactModalEditId, setContactModalEditId] = useState("");
 
   const handleClickShowMore = (idx) => {
     setShowMoreList((prev) => ({
@@ -31,24 +31,24 @@ const Tasks = () => {
   const handleClickFilter = (filterType) => {
     setFilter(filterType);
     if(filterType === 'All'){
-      setCurrTaskList(tasksList);
+      setCurrContactList(contactsList);
       return;
     }
-    const filteredTasks = tasksList.filter((task) => task.status === filterType);
-    setCurrTaskList(filteredTasks)
+    const filteredContacts = contactsList.filter((contact) => contact.status === filterType);
+    setCurrContactList(filteredContacts)
   }
 
   useEffect(() => {
-    const fetchTaskList = async () => {
-      const fetchedTask = await getAllTasks(token, dispatch);
+    const fetchContactList = async () => {
+      const fetchedContact = await getAllContacts(token, dispatch);
       
-      if(fetchedTask) {
-        setCurrTaskList(fetchedTask);
+      if(fetchedContact) {
+        setCurrContactList(fetchedContact);
       }
     }
     
-    fetchTaskList();
-  }, [dispatch, token, taskModalEditId]);
+    fetchContactList();
+  }, [dispatch, token, contactModalEditId]);
 
   const stripHtmlTags = (html) => {
     return html.replace(/<[^>]*>?/gm, '');
@@ -69,7 +69,7 @@ const Tasks = () => {
             : "bg-black bg-opacity-20 hover:text-white hover:scale-110 hover:bg-opacity-80 transition-all duration-200"}`}
             onClick={() => handleClickFilter("All")}
           >
-            All Tasks
+            All Contacts
           </button>
 
           <button
@@ -111,29 +111,29 @@ const Tasks = () => {
 
           <div className='w-full space-y-2'>
             {
-              currTaskList.map((task, idx) => (
+              currContactList.map((contact, idx) => (
                 <div
                   key={idx}
                   className='flex gap-2 border-2 w-full rounded-md py-1 px-2'
                 >
                   <div className='w-[20%]'>
-                    <Link to={`/task/${task._id}`}>
-                      <p className=' hover:text-white hover:underline transition-all ease-in-out duration-200'>{task.title}</p>
+                    <Link to={`/contact/${contact._id}`}>
+                      <p className=' hover:text-white hover:underline transition-all ease-in-out duration-200'>{contact.title}</p>
                     </Link>
                   </div>
                   <div className='w-[50%]'>
                     {
-                      !task?.description 
+                      !contact?.description 
                       ? (
                         <p>...</p>
                       ) : (
                         <p>
-                          {showMoreList[idx] || !isLength(task.description)
-                            ? <div dangerouslySetInnerHTML={{__html: task.description}}/>
-                            : `${stripHtmlTags(task.description).substring(0, 80)}...`
+                          {showMoreList[idx] || !isLength(contact.description)
+                            ? <div dangerouslySetInnerHTML={{__html: contact.description}}/>
+                            : `${stripHtmlTags(contact.description).substring(0, 80)}...`
                           }
                           
-                          {(isLength(task.description)) && (
+                          {(isLength(contact.description)) && (
                             <button 
                               onClick={() => handleClickShowMore(idx)}
                               className='text-xs text-white hover:text-teal-900'
@@ -148,16 +148,16 @@ const Tasks = () => {
                   <div className='w-[20%] flex flex-col justify-center items-center'>
                     <span
                       className={`border-2 max-w-max px-2 py-1 text-xs rounded-full ${
-                      task.status === 'In Progress'
-                      ? "bg-yellow-300" : task.status === 'Pending'
+                      contact.status === 'In Progress'
+                      ? "bg-yellow-300" : contact.status === 'Pending'
                       ? "bg-red-600" : "bg-green-500"}`}
                     >
-                      {task.status}
+                      {contact.status}
                     </span>
                   </div>
                   <div className='w-[10%] flex gap-2 justify-center items-center md:gap-10'>
                     <button
-                      onClick={() => navigate(`/task/${task._id}`)}
+                      onClick={() => navigate(`/contact/${contact._id}`)}
                     >
                       <FiEdit2
                         className='text-white hover:text-teal-300 hover:scale-110 transition-all duration-200'
@@ -166,8 +166,8 @@ const Tasks = () => {
                     <button>
                       <RiDeleteBin6Line
                         onClick={() => {
-                          setTaskModalEditId(task._id);
-                          setTaskModalEdit(true);
+                          setContactModalEditId(contact._id);
+                          setContactModalEdit(true);
                         }}
                         className='text-white hover:text-red-800 hover:scale-110 transition-all duration-200'
                       />
@@ -181,12 +181,12 @@ const Tasks = () => {
       </div>
 
       {
-        taskModalEdit
+        contactModalEdit
         ? (
-            <TaskModalEdit 
-              taskId={taskModalEditId} 
-              setTaskModalEdit={setTaskModalEdit} 
-              setTaskModalEditId={setTaskModalEditId}
+            <ContactModalEdit 
+              contactId={contactModalEditId} 
+              setContactModalEdit={setContactModalEdit} 
+              setContactModalEditId={setContactModalEditId}
             />
         ): (
           <></>
@@ -196,4 +196,4 @@ const Tasks = () => {
   )
 }
 
-export default Tasks
+export default Contacts

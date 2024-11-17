@@ -6,11 +6,11 @@ export const authEndpoints = {
     SIGNUP_API: BASE_URL + "/auth/signup",
 }
 
-// Task Endpoints
-export const taskEndpoints = {
-    CREATE_TASK_API: BASE_URL + "/task/createTask",
-    GET_TASK_API: BASE_URL + "/task/getTask",
-    GET_ALL_TASKS_API: BASE_URL + "/task/getAllTasks",
-    UPDATE_TASK_API: BASE_URL + "/task/updateTask",
-    DELETE_TASK_API: BASE_URL + "/task/deleteTask",
+// Contact Endpoints
+export const contactEndpoints = {
+    CREATE_CONTACT_API: BASE_URL + "/contact/createContact",
+    GET_CONTACT_API: BASE_URL + "/contact/getContact",
+    GET_ALL_CONTACTS_API: BASE_URL + "/contact/getAllContacts",
+    UPDATE_CONTACT_API: BASE_URL + "/contact/updateContact",
+    DELETE_CONTACT_API: BASE_URL + "/contact/deleteContact",
 }

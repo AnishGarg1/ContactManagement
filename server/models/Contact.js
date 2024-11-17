@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const taskSchema = new mongoose.Schema({
+const contactSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -22,4 +22,4 @@ const taskSchema = new mongoose.Schema({
     }
 }, {timestamps: true})
 
-module.exports = new mongoose.model("Task", taskSchema);
+module.exports = new mongoose.model("Contact", contactSchema);

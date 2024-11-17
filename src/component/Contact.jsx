@@ -3,16 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 import { CiEdit } from "react-icons/ci";
-import { getTask, updateTask } from '../service/apiUtils/taskAPIs';
+import { getContact, updateContact } from '../service/apiUtils/contactAPIs';
 import { useDispatch, useSelector } from 'react-redux';
 
-const Task = () => {
-    const { taskId } = useParams();
+const Contact = () => {
+    const { contactId } = useParams();
     const { token } = useSelector((state) => state.auth)
     const dispatch = useDispatch();
     
     const navigate = useNavigate();
-    const [currTask, setCurrTask] = useState({});
+    const [currContact, setCurrContact] = useState({});
 
     const [iSEditTitle, setIsEditTitle] = useState(false);
     const [editedTitle, setEditedTitle] = useState("");
@@ -25,7 +25,7 @@ const Task = () => {
     const handleEditTitle = (e) => {
         setEditedTitle(e.target.value);
 
-        if(e.target.value.trim() !== "" && e.target.value.trim() !== currTask.title){
+        if(e.target.value.trim() !== "" && e.target.value.trim() !== currContact.title){
             setIsUpdated(true);
         }
         else{
@@ -36,7 +36,7 @@ const Task = () => {
     const handleEditDescription = (value) => {
         setEditedDesc(value);
 
-        if(value.trim() !== "<p><br></p>" && value !== currTask.description){
+        if(value.trim() !== "<p><br></p>" && value !== currContact.description){
             setIsUpdated(true);
         }
         else{
@@ -47,7 +47,7 @@ const Task = () => {
     const handleEditStatus = (e) => {
         setEditedStatus(e.target.value);
 
-        if(e.target.value.trim() !== "" && e.target.value !== currTask.status){
+        if(e.target.value.trim() !== "" && e.target.value !== currContact.status){
             setIsUpdated(true);
         }
         else{
@@ -58,33 +58,33 @@ const Task = () => {
 
     const handleClickCancel = () => {
         setIsEditTitle(false);
-        setEditedTitle(currTask.title);
-        setEditedDesc(currTask.description);
-        setEditedStatus(currTask.status);
+        setEditedTitle(currContact.title);
+        setEditedDesc(currContact.description);
+        setEditedStatus(currContact.status);
         setIsUpdated(false);
     }
 
     const handleClickSave = async () => {
-        const updatedTask = {
-            ...currTask,
+        const updatedContact = {
+            ...currContact,
             title: editedTitle,
             description: editedDesc,
             status: editedStatus,
         }
         
-        const result = await updateTask({taskId, ...updatedTask}, token, dispatch);
+        const result = await updateContact({contactId, ...updatedContact}, token, dispatch);
         if(result){
-            setCurrTask(result);
+            setCurrContact(result);
             navigate("/dashboard");
         }
         setIsUpdated(false);
     }
 
     useEffect(() => {
-        const fetchTask = async () => {
-            const result = await getTask(taskId, token);
+        const fetchContact = async () => {
+            const result = await getContact(contactId, token);
             if(result){
-                setCurrTask(result);
+                setCurrContact(result);
                 
                 setEditedTitle(result.title);
                 setEditedDesc(result.description);
@@ -92,8 +92,8 @@ const Task = () => {
             }
         }
 
-        fetchTask();
-    }, [taskId, token])
+        fetchContact();
+    }, [contactId, token])
 
   return (
     <div className='p-6 bg-white rounded-lg shadow-md max-w-4xl mx-auto mt-8 animate-fadeIn'>
@@ -106,14 +106,14 @@ const Task = () => {
                     onChange={(e) => handleEditTitle(e)}
                     onBlur={() => setIsEditTitle(false)}
                     autoFocus
-                    placeholder='Type the task name here...'
+                    placeholder='Type the contact name here...'
                 />
             ) : (
                 <h1
                     className='text-2xl font-bold text-gray-800 cursor-pointer'
                     onClick={() => setIsEditTitle(true)}
                 >
-                    {editedTitle || "Type the task name here..."}
+                    {editedTitle || "Type the contact name here..."}
                 </h1>
             )}
             <CiEdit 
@@ -174,4 +174,4 @@ const Task = () => {
   )
 }
 
-export default Task
+export default Contact

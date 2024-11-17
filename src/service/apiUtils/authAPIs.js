@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { setToken, setUser } from "../../redux/slices/authSlice";
-import { setTasksList } from "../../redux/slices/taskSlice";
+import { setContactsList } from "../../redux/slices/contactSlice";
 import { apiConnect } from "../apiConnect";
 import { authEndpoints } from "../apis";
 
@@ -72,7 +72,7 @@ export const login = async (email, password, dispatch, navigate) => {
 
 export function logout(dispatch, navigate) {
     dispatch(setToken(null));
-    dispatch(setTasksList([]));
+    dispatch(setContactsList([]));
     localStorage.removeItem("token");
     toast.success("Logged Out");
     navigate("/");

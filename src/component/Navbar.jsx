@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { BiTask } from "react-icons/bi"
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { logout } from '../service/apiUtils/authAPIs'
@@ -25,7 +24,7 @@ const Navbar = () => {
         <div className='flex items-center h-full w-full mx-3 px-1 justify-between md:w-11/12'>
             <Link to={"/"}>
                 <div className='flex justify-center items-center gap-1 hover:text-white hover:scale-110 transition-all duration-200'>
-                    <BiTask/>
+                    {/* <BiContact/> Contact Icon */}
                     <p>
                         Rehaabit Task App
                     </p>
