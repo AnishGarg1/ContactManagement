@@ -1,16 +1,16 @@
 const Contact = require("../models/Contact");
 const User = require("../models/User");
 
+// Create a new contact
 exports.createContact = async (req, res) => {
   try {
     const userId = req.user.id;
+    const { firstName, lastName, email, phoneNumber, company, jobTitle } = req.body;
 
-    const { title, description } = req.body;
-
-    if (!title) {
+    if (!firstName || !lastName || !email || !phoneNumber) {
       return res.status(400).json({
         success: false,
-        message: "Please fill all details",
+        message: "Please fill all required details",
       });
     }
 
@@ -25,9 +25,12 @@ exports.createContact = async (req, res) => {
 
     const contact = new Contact({
       user: user._id,
-      title,
-      description,
-      status: "In Progress",
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      company,
+      jobTitle,
     });
 
     const createdContact = await contact.save();
@@ -42,7 +45,7 @@ exports.createContact = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      contact,
+      contact: createdContact,
       message: "Contact created successfully",
     });
   } catch (error) {
@@ -54,90 +57,86 @@ exports.createContact = async (req, res) => {
   }
 };
 
-// update contact
+// Update an existing contact
 exports.updateContact = async (req, res) => {
-    try {
-        const { contactId, title, description, status } = req.body;
-        
-        if(!contactId){
-            return res.status(400).json({
-                success: false,
-                message: "Please fill all details",
-            });
-        }
+  try {
+    const { contactId, firstName, lastName, email, phoneNumber, company, jobTitle } = req.body;
 
-        const contact = await Contact.findById(contactId);
-        if(!contact){
-            return res.statusa(404).json({
-                success: false,
-                message: "Contact not found",
-            });
-        }
-
-        if(title){
-            contact.title = title;
-        }
-        if(description){
-            contact.description = description;
-        }
-        if(status){
-            contact.status = status;
-        }
-
-        await contact.save();
-
-        return res.status(200).json({
-            success: true,
-            contact,
-            message: "Contact updated successfully",
-        });
-    } catch (error) {
-        console.log("Error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error, try again",
-        });
+    if (!contactId) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide the contact ID",
+      });
     }
-}
 
-// get contact details
+    const contact = await Contact.findById(contactId);
+
+    if (!contact) {
+      return res.status(404).json({
+        success: false,
+        message: "Contact not found",
+      });
+    }
+
+    if (firstName) contact.firstName = firstName;
+    if (lastName) contact.lastName = lastName;
+    if (email) contact.email = email;
+    if (phoneNumber) contact.phoneNumber = phoneNumber;
+    if (company) contact.company = company;
+    if (jobTitle) contact.jobTitle = jobTitle;
+
+    await contact.save();
+
+    return res.status(200).json({
+      success: true,
+      contact,
+      message: "Contact updated successfully",
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error, try again",
+    });
+  }
+};
+
+// Get contact details by ID
 exports.getContactDetails = async (req, res) => {
-    try {
-        const { contactId } = req.body;
+  try {
+    const { contactId } = req.body;
 
-        if(!contactId){
-            return res.status(400).json({
-                success: false,
-                message: "Please fill details",
-            });
-        }
-
-        const contact = await Contact.findById(contactId).populate({path: "user"});
-
-        contact.user.password = undefined;
-
-        if(!contact){
-            return res.status(404).json({
-                success: false,
-                message: "Contact not found",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            contact,
-            message: "Contact fetched successfully",
-        });
-    } catch (error) {
-        console.log("Error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error, try again",
-        });
+    if (!contactId) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide the contact ID",
+      });
     }
-}
 
-// get user's all contact
+    const contact = await Contact.findById(contactId).populate({ path: "user" });
+
+    if (!contact) {
+      return res.status(404).json({
+        success: false,
+        message: "Contact not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      contact,
+      message: "Contact fetched successfully",
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error, try again",
+    });
+  }
+};
+
+// Get all contacts for a user
 exports.getAllContactDetails = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -150,6 +149,7 @@ exports.getAllContactDetails = async (req, res) => {
       message: "All contacts fetched successfully",
     });
   } catch (error) {
+    console.log("Error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error, try again",
@@ -157,7 +157,7 @@ exports.getAllContactDetails = async (req, res) => {
   }
 };
 
-// delete contact
+// Delete a contact
 exports.deleteContact = async (req, res) => {
   try {
     const { contactId } = req.body;
@@ -166,7 +166,7 @@ exports.deleteContact = async (req, res) => {
     if (!contactId) {
       return res.status(400).json({
         success: false,
-        message: "Please fill all details",
+        message: "Please provide the contact ID",
       });
     }
 

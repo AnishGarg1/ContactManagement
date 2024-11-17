@@ -1,199 +1,168 @@
-import React, { useEffect, useState } from 'react'
-import { RiDeleteBin6Line } from "react-icons/ri"
+import React, { useEffect, useState } from "react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { FiEdit2 } from "react-icons/fi";
-import { Link, useNavigate } from 'react-router-dom';
-import { getAllContacts } from '../service/apiUtils/contactAPIs';
-import { useDispatch, useSelector } from 'react-redux';
-import ContactModalEdit from './ContactModalEdit';
+import { Link, useNavigate } from "react-router-dom";
+import { getAllContacts } from "../service/apiUtils/contactAPIs";
+import { useDispatch, useSelector } from "react-redux";
+import ContactModalEdit from "./ContactModalEdit";
 
 const Contacts = () => {
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  const { contactsList } = useSelector((state) => state.contact);
-  
-  const [currContactList, setCurrContactList] = useState([]);
-  const [filter, setFilter] = useState("All");
-  const [showMoreList, setShowMoreList] = useState([]);
+  // const { contactsList } = useSelector((state) => state.contact);
 
+  const [currContactList, setCurrContactList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [contactModalEdit, setContactModalEdit] = useState(false);
   const [contactModalEditId, setContactModalEditId] = useState("");
 
-  const handleClickShowMore = (idx) => {
-    setShowMoreList((prev) => ({
-      ...prev,
-      [idx]: !prev[idx],
-    }));
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [contactsPerPage] = useState(10); // Show 10 contacts per page
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
+  const handleClickEdit = (contactId) => {
+    navigate(`/contact/${contactId}`);
+  };
 
-  const handleClickFilter = (filterType) => {
-    setFilter(filterType);
-    if(filterType === 'All'){
-      setCurrContactList(contactsList);
-      return;
-    }
-    const filteredContacts = contactsList.filter((contact) => contact.status === filterType);
-    setCurrContactList(filteredContacts)
-  }
+  const handleDelete = (contactId) => {
+    setContactModalEditId(contactId);
+    setContactModalEdit(true);
+  };
+
+  const handlePaginationChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   useEffect(() => {
     const fetchContactList = async () => {
-      const fetchedContact = await getAllContacts(token, dispatch);
-      
-      if(fetchedContact) {
-        setCurrContactList(fetchedContact);
+      const fetchedContacts = await getAllContacts(token, dispatch);
+      if (fetchedContacts) {
+        setCurrContactList(fetchedContacts);
       }
-    }
-    
+    };
+
     fetchContactList();
-  }, [dispatch, token, contactModalEditId]);
+  }, [dispatch, token]);
 
-  const stripHtmlTags = (html) => {
-    return html.replace(/<[^>]*>?/gm, '');
-  }
+  const filteredContacts = currContactList.filter((contact) => {
+    return (
+      (contact.name &&
+        contact.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.email &&
+        contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.phone &&
+        contact.phone.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.company &&
+        contact.company.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.jobTitle &&
+        contact.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  });
 
-  const isLength = (description) => {
-    return stripHtmlTags(description).length > 80;
-  }
-  
+  // Pagination logic
+  const indexOfLastContact = currentPage * contactsPerPage;
+  const indexOfFirstContact = indexOfLastContact - contactsPerPage;
+  const currentContacts = filteredContacts.slice(
+    indexOfFirstContact,
+    indexOfLastContact
+  );
+
+  const totalPages = Math.ceil(filteredContacts.length / contactsPerPage);
+
   return (
-    <div className='w-full'>
-      <div className='flex flex-col gap-2 w-11/12 mx-auto'>
-        <div className='w-full flex gap-2'>
-          <button
-            className={`border rounded-md px-2 py-1 ${
-            filter === "All" 
-            ? "bg-blue-300" 
-            : "bg-black bg-opacity-20 hover:text-white hover:scale-110 hover:bg-opacity-80 transition-all duration-200"}`}
-            onClick={() => handleClickFilter("All")}
-          >
-            All Contacts
-          </button>
-
-          <button
-            className={`border rounded-md px-2 py-1 ${
-            filter === "In Progress" 
-            ? "bg-blue-300" 
-            : "bg-black bg-opacity-20 hover:text-white hover:scale-110 hover:bg-opacity-80 transition-all duration-200"}`}
-            onClick={() => handleClickFilter("In Progress")}
-          >
-            In Progress
-          </button>
-          <button
-            className={`border rounded-md px-2 py-1 ${
-            filter === "Pending" 
-            ? "bg-blue-300" 
-            : "bg-black bg-opacity-20 hover:text-white hover:scale-110 hover:bg-opacity-80 transition-all duration-200"}`}
-            onClick={() => handleClickFilter("Pending")}
-          >
-            Pending
-          </button>
-          <button
-            className={`border rounded-md px-2 py-1 ${
-            filter === "Completed" 
-            ? "bg-blue-300" 
-            : "bg-black bg-opacity-20 hover:text-white hover:scale-110 hover:bg-opacity-80 transition-all duration-200"}`}
-            onClick={() => handleClickFilter("Completed")}
-          >
-            Completed
-          </button>
+    <div className="w-full">
+      <div className="flex flex-col gap-2 w-11/12 mx-auto">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder="Search by name, email, phone, company or job title"
+            className="border rounded-md px-3 py-2 w-full"
+          />
         </div>
 
-        <div className='flex flex-col w-full gap-2'>
-          <div className='flex w-full border-2 rounded-md py-1 gap-2 px-2 font-bold'>
-            <div className='w-[20%]'>Title</div>
-            <div className='w-[50%]'>Description</div>
-            <div className='w-[20%] text-center'>Status</div>
-            <div className='w-[10%] text-center'>Action</div>
+        <div className="flex flex-col w-full gap-2 mt-4">
+          <div className="flex w-full border-2 rounded-md py-1 gap-2 px-2 font-bold">
+            <div className="w-[20%]">Name</div>
+            <div className="w-[20%]">Email</div>
+            <div className="w-[20%]">Phone</div>
+            <div className="w-[20%]">Company</div>
+            <div className="w-[20%]">Job Title</div>
+            <div className="w-[10%] text-center">Action</div>
           </div>
 
-          <div className='w-full space-y-2'>
-            {
-              currContactList.map((contact, idx) => (
-                <div
-                  key={idx}
-                  className='flex gap-2 border-2 w-full rounded-md py-1 px-2'
-                >
-                  <div className='w-[20%]'>
-                    <Link to={`/contact/${contact._id}`}>
-                      <p className=' hover:text-white hover:underline transition-all ease-in-out duration-200'>{contact.title}</p>
-                    </Link>
-                  </div>
-                  <div className='w-[50%]'>
-                    {
-                      !contact?.description 
-                      ? (
-                        <p>...</p>
-                      ) : (
-                        <p>
-                          {showMoreList[idx] || !isLength(contact.description)
-                            ? <div dangerouslySetInnerHTML={{__html: contact.description}}/>
-                            : `${stripHtmlTags(contact.description).substring(0, 80)}...`
-                          }
-                          
-                          {(isLength(contact.description)) && (
-                            <button 
-                              onClick={() => handleClickShowMore(idx)}
-                              className='text-xs text-white hover:text-teal-900'
-                            >
-                              {showMoreList[idx] ? "Show Less" : "Show More"}
-                            </button>
-                          )}
-                        </p>
-                      )
-                    }
-                  </div>
-                  <div className='w-[20%] flex flex-col justify-center items-center'>
-                    <span
-                      className={`border-2 max-w-max px-2 py-1 text-xs rounded-full ${
-                      contact.status === 'In Progress'
-                      ? "bg-yellow-300" : contact.status === 'Pending'
-                      ? "bg-red-600" : "bg-green-500"}`}
-                    >
-                      {contact.status}
-                    </span>
-                  </div>
-                  <div className='w-[10%] flex gap-2 justify-center items-center md:gap-10'>
-                    <button
-                      onClick={() => navigate(`/contact/${contact._id}`)}
-                    >
-                      <FiEdit2
-                        className='text-white hover:text-teal-300 hover:scale-110 transition-all duration-200'
-                      />
-                    </button>
-                    <button>
-                      <RiDeleteBin6Line
-                        onClick={() => {
-                          setContactModalEditId(contact._id);
-                          setContactModalEdit(true);
-                        }}
-                        className='text-white hover:text-red-800 hover:scale-110 transition-all duration-200'
-                      />
-                    </button>
-                  </div>
+          <div className="w-full space-y-2">
+            {currentContacts.map((contact) => (
+              <div
+                key={contact._id}
+                className="flex gap-2 border-2 w-full rounded-md py-1 px-2"
+              >
+                <div className="w-[20%]">
+                  <Link to={`/contact/${contact._id}`}>
+                    <p className="hover:text-white hover:underline transition-all ease-in-out duration-200">
+                      {contact.name ||
+                        `${contact.firstName} ${contact.lastName}`}
+                    </p>
+                  </Link>
                 </div>
-              ))
-            }
+                <div className="w-[20%]">
+                  <p>{contact.email}</p>
+                </div>
+                <div className="w-[20%]">
+                  <p>{contact.phoneNumber}</p>
+                </div>
+                <div className="w-[20%]">
+                  <p>{contact.company}</p>
+                </div>
+                <div className="w-[20%]">
+                  <p>{contact.jobTitle}</p>
+                </div>
+                <div className="w-[10%] flex gap-2 justify-center items-center">
+                  <button onClick={() => handleClickEdit(contact._id)}>
+                    <FiEdit2 className="text-white hover:text-teal-300 hover:scale-110 transition-all duration-200" />
+                  </button>
+                  <button onClick={() => handleDelete(contact._id)}>
+                    <RiDeleteBin6Line className="text-white hover:text-red-800 hover:scale-110 transition-all duration-200" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-4">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePaginationChange(index + 1)}
+                className={`px-4 py-2 mx-1 border rounded-md ${
+                  currentPage === index + 1
+                    ? "bg-blue-300"
+                    : "bg-black bg-opacity-20 hover:text-white"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {
-        contactModalEdit
-        ? (
-            <ContactModalEdit 
-              contactId={contactModalEditId} 
-              setContactModalEdit={setContactModalEdit} 
-              setContactModalEditId={setContactModalEditId}
-            />
-        ): (
-          <></>
-        )
-      }
+      {contactModalEdit && (
+        <ContactModalEdit
+          contactId={contactModalEditId}
+          setContactModalEdit={setContactModalEdit}
+          setContactModalEditId={setContactModalEditId}
+        />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Contacts
+export default Contacts;
