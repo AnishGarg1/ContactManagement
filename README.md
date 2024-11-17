@@ -1,4 +1,3 @@
-```markdown
 # Contact Management MERN Stack Application
 
 This project is a **Contact Management** web application built with the **MERN stack** (MongoDB, Express, React, Node.js). The application allows users to manage their contacts, including features such as creating, editing, and deleting contact information. The app uses a MongoDB database for storing contact data and an Express backend to handle API requests. The frontend is built using React.
